@@ -50,3 +50,21 @@ function putStoriesOnPage() {
 
   $allStoriesList.show();
 }
+
+/*2b.4) Write a function in stories.js that is called when users submit the form. 
+Pick a good name for it. This function should get the data from the form, call the
+ .addStory method you wrote, and then put that new story on the page.*/
+function postStory(e) {
+  e.preventDefault();
+  const author = document.querySelector("#author").value;
+  const title = document.querySelector("#title").value;
+  const url = document.querySelector("#storyURL").value;
+  const newStory = storyList.addStory(currentUser, { author, title, url });
+  const authorrest = (document.querySelector("#author").value = "");
+  const titlereset = (document.querySelector("#title").value = "");
+  const urlreset = (document.querySelector("#storyURL").value = "");
+  alert("Story posted successfully")
+}
+
+const submitForm = document.querySelector("#submit-form");
+submitForm.addEventListener("submit", postStory);
