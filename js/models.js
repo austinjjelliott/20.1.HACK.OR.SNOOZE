@@ -7,7 +7,6 @@ const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
  */
 
 class Story {
-
   /** Make instance of Story from data object about story:
    *   - {title, author, url, username, storyId, createdAt}
    */
@@ -28,7 +27,6 @@ class Story {
     return "hostname.com";
   }
 }
-
 
 /******************************************************************************
  * List of Story instances: used by UI to show story lists in DOM.
@@ -60,7 +58,7 @@ class StoryList {
     });
 
     // turn plain old story objects from API into instances of Story class
-    const stories = response.data.stories.map(story => new Story(story));
+    const stories = response.data.stories.map((story) => new Story(story));
 
     // build an instance of our own class using the new array of stories
     return new StoryList(stories);
@@ -72,24 +70,23 @@ class StoryList {
    *
    * Returns the new Story instance
    */
-
-  async  addStory( /* user, newStory */) {
-    // UNIMPLEMENTED: FIRST ATTEMPT AT IMPLEMENTATION!
-    let params = { 
-      token: token, 
+  //FIRST ATTEMPT --- This is part 2A. it works!
+  async addStory(user, { title, author, url }) {
+    const token = user.loginToken;
+    let params = {
+      token,
       story: {
-        title: title, 
+        title: title,
         author: author,
         url: url,
-      }
-    }
-    const res = await axios.post(`${BASE_URL}/stories`, params)
-
+      },
+    };
+    const response = await axios.post(`${BASE_URL}/stories`, params);
+    const newStory = new Story(response.data.story);
+    this.stories.push(newStory);
+    return newStory;
   }
 }
-
-
-
 
 /******************************************************************************
  * User: a user in the system (only used to represent the current user)
@@ -101,21 +98,17 @@ class User {
    *   - token
    */
 
-  constructor({
-                username,
-                name,
-                createdAt,
-                favorites = [],
-                ownStories = []
-              },
-              token) {
+  constructor(
+    { username, name, createdAt, favorites = [], ownStories = [] },
+    token
+  ) {
     this.username = username;
     this.name = name;
     this.createdAt = createdAt;
 
     // instantiate Story instances for the user's favorites and ownStories
-    this.favorites = favorites.map(s => new Story(s));
-    this.ownStories = ownStories.map(s => new Story(s));
+    this.favorites = favorites.map((s) => new Story(s));
+    this.ownStories = ownStories.map((s) => new Story(s));
 
     // store the login token on the user so it's easy to find for API calls.
     this.loginToken = token;
@@ -135,7 +128,7 @@ class User {
       data: { user: { username, password, name } },
     });
 
-    let { user } = response.data
+    let { user } = response.data;
 
     return new User(
       {
@@ -143,7 +136,7 @@ class User {
         name: user.name,
         createdAt: user.createdAt,
         favorites: user.favorites,
-        ownStories: user.stories
+        ownStories: user.stories,
       },
       response.data.token
     );
@@ -170,7 +163,7 @@ class User {
         name: user.name,
         createdAt: user.createdAt,
         favorites: user.favorites,
-        ownStories: user.stories
+        ownStories: user.stories,
       },
       response.data.token
     );
@@ -196,7 +189,7 @@ class User {
           name: user.name,
           createdAt: user.createdAt,
           favorites: user.favorites,
-          ownStories: user.stories
+          ownStories: user.stories,
         },
         token
       );
