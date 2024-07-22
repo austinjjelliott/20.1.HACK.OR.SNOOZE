@@ -45,3 +45,9 @@ function showSubmitForm() {
 }
 const navSubmit = document.querySelector("#nav-submit");
 navSubmit.addEventListener("click", showSubmitForm);
+
+// I want it so that when you click the top left hack or snooze it resets the page...
+const hackOrSnoozeLogo = document.querySelector("#nav-all");
+hackOrSnoozeLogo.addEventListener("click", function (e) {
+  location.reload();
+});

@@ -1,5 +1,22 @@
 /* Lists of stories */
-
+/*Added classes...*/
+ol {
+  list-style-type: none;
+}
+li :hover {
+  cursor: pointer;
+}
+.small {
+  font-size: 0.5rem;
+  color: gray;
+}
+.favorite {
+  color: pink;
+}
+.deleteThis {
+  color: greenyellow;
+}
+/*Preset classes - not touched. */
 .stories-list {
   margin: 20px 5px;
 }
@@ -15,7 +32,6 @@
   font-size: 150%;
   margin: 20px 30px;
 }
-
 
 /* Individual stories */
 

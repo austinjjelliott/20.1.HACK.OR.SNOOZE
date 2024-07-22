@@ -63,8 +63,106 @@ function postStory(e) {
   const authorrest = (document.querySelector("#author").value = "");
   const titlereset = (document.querySelector("#title").value = "");
   const urlreset = (document.querySelector("#storyURL").value = "");
-  alert("Story posted successfully")
+  alert("Story posted successfully");
 }
 
 const submitForm = document.querySelector("#submit-form");
 submitForm.addEventListener("submit", postStory);
+
+//MY STORIES SECTION: CLICK ON MY STORIES AND DISPLAY ONLY STORIES THE LOGGED IN USER POSTED
+// <!-- This is what needs to be done:
+//  When clicking nav-my-stories, need to show the my-stories-secion(this is an ol)
+//  Needs to also load a delete button next to the story
+//  needs to also hide the all-stories-list...hopefully just by adding the hidden class
+//  or maybe a .hide() somewhere
+//  -->
+
+const myStoriesURL = "https://hack-or-snooze-v3.herokuapp.com/users/";
+
+async function showMyStories() {
+  const { username, loginToken: token } = currentUser;
+  const res = await axios.get(`${myStoriesURL}${username}`, {
+    params: {
+      token: token,
+    },
+  });
+  console.log(res.data.user);
+  const storiesToHide = document.querySelector("#all-stories-list");
+  storiesToHide.classList.add("hidden");
+  submitForm.classList.add("hidden");
+
+  const ownStories = document.querySelector("#my-stories-list");
+  if (currentUser.ownStories.length === 0) {
+    ownStories.innerHTML = `<h5>No Stories Added By User Yet!</h5>`;
+  } else {
+    ownStories.innerHTML = "";
+    res.data.user.stories.forEach((story) => {
+      const newList = document.createElement("li");
+      const displayStoryName = document.createElement("span");
+      const displayStoryURL = document.createElement("a");
+      const favoriteBtn = document.createElement("i");
+      const deleteBtn = document.createElement("i");
+      displayStoryName.textContent = story.title;
+      deleteBtn.setAttribute("data-story-id", story.storyId);
+      displayStoryName.classList.add("stories-list");
+      displayStoryURL.setAttribute("href", story.url);
+      displayStoryURL.innerText = `      ${story.url}`;
+      displayStoryURL.classList.add("small");
+      favoriteBtn.classList.add(`fa`);
+      favoriteBtn.classList.add(`fa-heart`);
+      favoriteBtn.classList.add(`heart`);
+      deleteBtn.classList.add(`fa`);
+      deleteBtn.classList.add(`fa-trash`);
+      deleteBtn.classList.add(`trash`);
+      ownStories.appendChild(newList);
+      newList.appendChild(favoriteBtn);
+      newList.appendChild(deleteBtn);
+      newList.appendChild(displayStoryName);
+      displayStoryName.appendChild(displayStoryURL);
+    });
+  }
+  const hearts = document.querySelectorAll(".heart");
+  hearts.forEach((heart) => {
+    heart.addEventListener("click", function () {
+      heart.classList.toggle("favorite");
+    });
+  });
+  const deleteThis = document.querySelectorAll(".trash");
+  deleteThis.forEach((trashcan) => {
+    trashcan.addEventListener("click", function () {
+      trashcan.classList.add("deleteThis");
+    });
+  });
+}
+const myStoriesList = document.querySelector("#nav-my-stories");
+myStoriesList.addEventListener("click", showMyStories);
+
+//Deleting a story:
+const deleteStoryURL = "https://hack-or-snooze-v3.herokuapp.com/stories/";
+
+async function deleteStory(token, storyId) {
+  // let token = userToken;
+  try {
+    const res = await axios.delete(`${deleteStoryURL}${storyId}`, {
+      params: {
+        token: userToken,
+      },
+    });
+    alert("Story has been deleted");
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    alert("Error deleting story");
+  }
+}
+
+// Event delegation to handle clicks on trash can icons
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("trash")) {
+    const storyIdToDelete = e.target.getAttribute("data-story-id");
+    if (userToken && storyIdToDelete) {
+      deleteStory(userToken, storyIdToDelete);
+    } else {
+      alert("Cannot delete story - either not logged in or story ID not found");
+    }
+  }
+});

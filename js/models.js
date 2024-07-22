@@ -1,6 +1,7 @@
 "use strict";
 
 const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
+let userToken = localStorage.getItem("userToken") || null;
 
 /******************************************************************************
  * Story: a single story in the system
@@ -23,8 +24,8 @@ class Story {
   /** Parses hostname out of URL and returns it. */
 
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    const url = new URL(this.url);
+    return url.hostname;
   }
 }
 
@@ -156,6 +157,7 @@ class User {
     });
 
     let { user } = response.data;
+    localStorage.setItem("userToken", response.data.token);
 
     return new User(
       {
