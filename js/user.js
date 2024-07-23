@@ -110,6 +110,9 @@ function saveUserCredentialsInLocalStorage() {
 function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
+  const loginForms = document.querySelector(".account-forms-container");
+  loginForms.classList.add("hidden");
+
   $allStoriesList.show();
 
   updateNavOnLogin();

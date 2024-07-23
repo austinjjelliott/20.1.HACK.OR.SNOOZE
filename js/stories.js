@@ -20,8 +20,6 @@ async function getAndShowStoriesOnStart() {
  */
 
 function generateStoryMarkup(story) {
-  // console.debug("generateStoryMarkup", story);
-
   const hostName = story.getHostName();
   if (currentUser) {
     const isFavorite = currentUser.favorites.some(
@@ -87,12 +85,6 @@ const submitForm = document.querySelector("#submit-form");
 submitForm.addEventListener("submit", postStory);
 
 //MY STORIES SECTION: CLICK ON MY STORIES AND DISPLAY ONLY STORIES THE LOGGED IN USER POSTED
-// <!-- This is what needs to be done:
-//  When clicking nav-my-stories, need to show the my-stories-secion(this is an ol)
-//  Needs to also load a delete button next to the story
-//  needs to also hide the all-stories-list...hopefully just by adding the hidden class
-//  or maybe a .hide() somewhere
-//  -->
 
 const myStoriesURL = "https://hack-or-snooze-v3.herokuapp.com/users/";
 
@@ -147,7 +139,6 @@ async function showMyStories() {
   //   heart.addEventListener("click", function () {
   //     heart.classList.toggle("favorite");
   //   });
-  // }); NOTE -- This has been commented out because it should be handled by the actual adding to favorites function now
   const deleteThis = document.querySelectorAll(".trash");
   deleteThis.forEach((trashcan) => {
     trashcan.addEventListener("click", function () {
