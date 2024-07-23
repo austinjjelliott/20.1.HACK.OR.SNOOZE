@@ -226,4 +226,14 @@ class User {
     this.favorites = res.data.user.favorites.map((fav) => new Story(fav));
     return this.favorites;
   }
+  //SHOWING MY STORIES SHOWING MY STORIES ((tested and works))
+  async showMyStories() {
+    const res = await axios.get(`${BASE_URL}/users/${this.username}`, {
+      params: { token: this.loginToken },
+    });
+    this.ownStories = res.data.user.stories.map(
+      (ownStory) => new Story(ownStory)
+    );
+    return this.ownStories;
+  }
 }

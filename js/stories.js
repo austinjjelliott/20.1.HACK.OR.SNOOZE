@@ -29,6 +29,7 @@ function generateStoryMarkup(story) {
     return $(`
       <li id="${story.storyId}">
         <i class="fa ${heartClass} heart"></i>
+        <i class="fa fa-trash trash"></i>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -83,71 +84,8 @@ function postStory(e) {
 
 const submitForm = document.querySelector("#submit-form");
 submitForm.addEventListener("submit", postStory);
-
-//MY STORIES SECTION: CLICK ON MY STORIES AND DISPLAY ONLY STORIES THE LOGGED IN USER POSTED
-
-const myStoriesURL = "https://hack-or-snooze-v3.herokuapp.com/users/";
-
-async function showMyStories() {
-  const { username, loginToken: token } = currentUser;
-  const res = await axios.get(`${myStoriesURL}${username}`, {
-    params: {
-      token: token,
-    },
-  });
-  const storiesToHide = document.querySelector("#all-stories-list");
-  storiesToHide.classList.add("hidden");
-  submitForm.classList.add("hidden");
-  const myStoriesList = document.querySelector("#my-stories-list");
-  myStoriesList.classList.remove("hidden");
-  const myFavsToHide = document
-    .querySelector("#favorites-list")
-    .classList.add("hidden");
-
-  const ownStories = document.querySelector("#my-stories-list");
-  if (currentUser.ownStories.length === 0) {
-    ownStories.innerHTML = `<h5>No Stories Added By User Yet!</h5>`;
-  } else {
-    ownStories.innerHTML = "";
-    res.data.user.stories.forEach((story) => {
-      const newList = document.createElement("li");
-      const displayStoryName = document.createElement("span");
-      const displayStoryURL = document.createElement("a");
-      const favoriteBtn = document.createElement("i");
-      const deleteBtn = document.createElement("i");
-      displayStoryName.textContent = story.title;
-      deleteBtn.setAttribute("data-story-id", story.storyId);
-      displayStoryName.classList.add("stories-list");
-      displayStoryURL.setAttribute("href", story.url);
-      displayStoryURL.innerText = `      ${story.url}`;
-      displayStoryURL.classList.add("small");
-      favoriteBtn.classList.add(`fa`);
-      favoriteBtn.classList.add(`fa-heart`);
-      favoriteBtn.classList.add(`heart`);
-      deleteBtn.classList.add(`fa`);
-      deleteBtn.classList.add(`fa-trash`);
-      deleteBtn.classList.add(`trash`);
-      ownStories.appendChild(newList);
-      newList.appendChild(favoriteBtn);
-      newList.appendChild(deleteBtn);
-      newList.appendChild(displayStoryName);
-      displayStoryName.appendChild(displayStoryURL);
-    });
-  }
-  // const hearts = document.querySelectorAll(".heart");
-  // hearts.forEach((heart) => {
-  //   heart.addEventListener("click", function () {
-  //     heart.classList.toggle("favorite");
-  //   });
-  const deleteThis = document.querySelectorAll(".trash");
-  deleteThis.forEach((trashcan) => {
-    trashcan.addEventListener("click", function () {
-      trashcan.classList.add("deleteThis");
-    });
-  });
-}
-const myStoriesList = document.querySelector("#nav-my-stories");
-myStoriesList.addEventListener("click", showMyStories);
+///////
+////Showing my stories - my stories section:
 
 //Deleting a story:
 const deleteStoryURL = "https://hack-or-snooze-v3.herokuapp.com/stories/";
@@ -163,16 +101,19 @@ async function deleteStory(token, storyId) {
     alert("Story has been deleted");
   } catch (error) {
     console.error("Error deleting story:", error);
-    alert("Error deleting story");
+    alert("You can only delete your own stories!");
   }
 }
 
 // Event delegation to handle clicks on trash can icons
 document.addEventListener("click", function (e) {
-  if (e.target.classList.contains("trash")) {
-    const storyIdToDelete = e.target.getAttribute("data-story-id");
-    if (userToken && storyIdToDelete) {
-      deleteStory(userToken, storyIdToDelete);
+  const target = e.target
+  const storyId = target.closest("li").id;
+  if (target.classList.contains("trash")) {
+    console.log(storyId);
+
+    if (userToken && storyId) {
+      deleteStory(userToken, storyId);
     } else {
       alert("Cannot delete story - either not logged in or story ID not found");
     }
@@ -183,7 +124,6 @@ document.addEventListener("click", function (e) {
 async function favoritesClick(e) {
   const target = e.target;
   const storyId = target.closest("li").id;
-  console.log(storyId);
   if (target.classList.contains("favorite")) {
     await currentUser.removeFavorites(storyId);
     target.classList.remove("favorite");
@@ -218,8 +158,30 @@ async function showMyFavorites() {
       favoriteList.appendChild(storyMarkup[0]); // this is because generateStoryMarkup returns a jQuery element
     });
   }
-  // favoriteList.style.display = "block";
 }
 
 const favoritesNav = document.querySelector("#nav-favorites");
 favoritesNav.addEventListener("click", showMyFavorites);
+
+async function showMyStories() {
+  const myStories = await currentUser.showMyStories();
+  const ownStoriesList = document.getElementById("my-stories-list");
+  const storiesToHide = document.querySelector("#all-stories-list");
+  const favoritesToHide = document.getElementById("favorites-list");
+  submitForm.classList.add("hidden");
+  storiesToHide.classList.add("hidden");
+  favoritesToHide.classList.add("hidden");
+  ownStoriesList.classList.remove("hidden");
+
+  ownStoriesList.innerHTML = "";
+  if (myStories.length === 0) {
+    ownStoriesList.innerHTML = `<h5>No Stories Added By User Yet!</h5>`;
+  } else {
+    myStories.forEach((story) => {
+      const storyMarkup = generateStoryMarkup(story);
+      ownStoriesList.appendChild(storyMarkup[0]);
+    });
+  }
+}
+const myStoriesNav = document.querySelector("#nav-my-stories");
+myStoriesNav.addEventListener("click", showMyStories);

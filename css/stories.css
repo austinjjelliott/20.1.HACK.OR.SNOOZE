@@ -1,26 +1,18 @@
 /* Lists of stories */
 /*Added classes...*/
-/* ol {
-  list-style-type: none;
-} */
+
 li :hover {
   cursor: pointer;
 }
 .trash:hover {
   color: red;
 }
-.small {
-  font-size: 0.5rem;
-  color: gray;
-}
+
 .heart:hover {
   color: pink;
 }
 .favorite {
   color: pink;
-}
-.deleteThis {
-  color: greenyellow;
 }
 /*Preset classes - not touched. */
 .stories-list {
