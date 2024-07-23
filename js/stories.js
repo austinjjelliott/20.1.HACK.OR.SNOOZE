@@ -23,8 +23,14 @@ function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
+  const isFavorite = currentUser.favorites.some(
+    (fav) => fav.storyId === story.storyId
+  );
+  const heartClass = isFavorite ? "fa-heart favorite" : "fa-heart";
+
   return $(`
       <li id="${story.storyId}">
+        <i class="fa ${heartClass} heart"></i>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -86,10 +92,14 @@ async function showMyStories() {
       token: token,
     },
   });
-  console.log(res.data.user);
   const storiesToHide = document.querySelector("#all-stories-list");
   storiesToHide.classList.add("hidden");
   submitForm.classList.add("hidden");
+  const myStoriesList = document.querySelector("#my-stories-list");
+  myStoriesList.classList.remove("hidden");
+  const myFavsToHide = document
+    .querySelector("#favorites-list")
+    .classList.add("hidden");
 
   const ownStories = document.querySelector("#my-stories-list");
   if (currentUser.ownStories.length === 0) {
@@ -121,12 +131,12 @@ async function showMyStories() {
       displayStoryName.appendChild(displayStoryURL);
     });
   }
-  const hearts = document.querySelectorAll(".heart");
-  hearts.forEach((heart) => {
-    heart.addEventListener("click", function () {
-      heart.classList.toggle("favorite");
-    });
-  });
+  // const hearts = document.querySelectorAll(".heart");
+  // hearts.forEach((heart) => {
+  //   heart.addEventListener("click", function () {
+  //     heart.classList.toggle("favorite");
+  //   });
+  // }); NOTE -- This has been commented out because it should be handled by the actual adding to favorites function now
   const deleteThis = document.querySelectorAll(".trash");
   deleteThis.forEach((trashcan) => {
     trashcan.addEventListener("click", function () {
@@ -166,3 +176,48 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+
+//Event Delegation to handle clicks on heart icons to add to favorite list
+async function favoritesClick(e) {
+  const target = e.target;
+  const storyId = target.closest("li").id;
+  console.log(storyId)
+  if (target.classList.contains("favorite")) {
+    await currentUser.removeFavorites(storyId);
+    target.classList.remove("favorite");
+  } else {
+    await currentUser.addFavorites(storyId);
+    target.classList.add("favorite");
+  }
+}
+
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("heart")) {
+    favoritesClick(e);
+  }
+});
+
+async function showMyFavorites() {
+  const favorites = await currentUser.getFavorites();
+  const favoriteList = document.getElementById("favorites-list");
+  const storiesToHide = document.querySelector("#all-stories-list");
+  const myStoriesToHide = document.querySelector("#my-stories-list");
+  storiesToHide.classList.add("hidden");
+  myStoriesToHide.classList.add("hidden");
+  submitForm.classList.add("hidden");
+  favoriteList.classList.remove("hidden");
+
+  favoriteList.innerHTML = "";
+  if (favorites.length === 0) {
+    favoriteList.innerHTML = `<h5>No Favorites Added By User Yet!</h5>`;
+  } else {
+    favorites.forEach((story) => {
+      const storyMarkup = generateStoryMarkup(story);
+      favoriteList.appendChild(storyMarkup[0]); // this is because generateStoryMarkup returns a jQuery element
+    });
+  }
+  // favoriteList.style.display = "block";
+}
+
+const favoritesNav = document.querySelector("#nav-favorites");
+favoritesNav.addEventListener("click", showMyFavorites);

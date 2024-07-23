@@ -88,37 +88,7 @@
       <ol id="all-stories-list" class="stories-list"></ol>
       <!-- List of USERS OWN Stories (ie "my stories")-->
       <ol id="my-stories-list" class="my-stories"></ol>
-
-      <!-- This is what needs to be done: 
- When clicking nav-my-stories, need to show the my-stories-secion(this is an ol)
- Needs to also load a delete button next to the story
- needs to also hide the all-stories-list...hopefully just by adding the hidden class
- or maybe a .hide() somewhere
- -->
-      <!-- This is what worked in my API testing
-      const myStoriesURL = "https://hack-or-snooze-v3.herokuapp.com/users/";
-      async function showMyStories(token, username) {
-        const res = await axios.get(`${myStoriesURL}${username}`, {
-          params: {
-            token: userToken,
-          },
-        });
-        console.log(res.data.user);
-        const myStoriesDiv = document.querySelector("#myStories");
-        myStoriesDiv.innerHTML = ""; //This clears it from previous use
-        res.data.user.stories.forEach((story) => {
-          const displayStoryName = document.createElement("p");
-          displayStoryName.textContent = story.title;
-          myStoriesDiv.appendChild(displayStoryName);
-        });
-      }
-      const myStoriesForm = document.querySelector("#myStoriesForm");
-      myStoriesForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        // Assuming userToken and loggedInUsername contain the logged-in user's token and username
-        showMyStories(userToken, loggedInUsername);
-      }); -->
-      <!-- This is the end of the my stories section. Clean up please -->
+      <ol id="favorites-list" class="stories-list"></ol>
     </section>
 
     <!-- Login and signup forms -->
