@@ -35,19 +35,34 @@ function updateNavOnLogin() {
   $navUserProfile.text(`${currentUser.username}`).show();
 }
 
-/*Subpart 2b.3) Write a function in nav.js that is called when users
- click that navbar link. Look at the other function names in that file that do 
- similar things and pick something descriptive and similar.*/
+/*Subpart 2b.3) Submit form nav bar link */
 
 function showSubmitForm() {
+  hidePageComponents();
+  const userProfileToHide = document.getElementById("user-profile");
+  userProfileToHide.classList.add("hidden");
   const submitForm = document.querySelector("#submit-form");
   submitForm.classList.toggle("hidden");
 }
 const navSubmit = document.querySelector("#nav-submit");
 navSubmit.addEventListener("click", showSubmitForm);
 
-// I want it so that when you click the top left hack or snooze it resets the page...
+// I want it so that when you click the top left hack or snooze it reloads the page...
 const hackOrSnoozeLogo = document.querySelector("#nav-all");
 hackOrSnoozeLogo.addEventListener("click", function (e) {
   location.reload();
 });
+
+//showing user profile
+function showUserProfile() {
+  hidePageComponents();
+  const ownStoriesList = document.getElementById("my-stories-list");
+  const storiesToHide = document.querySelector("#all-stories-list");
+  const favoritesToHide = document.getElementById("favorites-list");
+  submitForm.classList.add("hidden");
+  storiesToHide.classList.add("hidden");
+  favoritesToHide.classList.add("hidden");
+  ownStoriesList.classList.add("hidden");
+  currentUser.showMyProfile();
+}
+$navUserProfile.on("click", showUserProfile);

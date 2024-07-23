@@ -57,7 +57,7 @@
     </nav>
 
     <!--AREA FOR THE FORM WHERE YOU SUBMIT NEW STORIES -->
-    <section class="submit-container">
+    <section class="submit-container container">
       <form class="hidden submit-form" id="submit-form">
         <label display="span">Author</label>
         <input type="text" id="author" placeholder="author" />
@@ -77,6 +77,7 @@
       <ol id="all-stories-list" class="stories-list"></ol>
       <!-- List of USERS OWN Stories (ie "my stories")-->
       <ol id="my-stories-list" class="my-stories stories-list"></ol>
+      <!-- List of FAVORITE stories -->
       <ol id="favorites-list" class="stories-list"></ol>
     </section>
 
@@ -132,6 +133,15 @@
         </div>
         <button type="submit">create account</button>
       </form>
+    </section>
+    <!-- USER PROFILE section -->
+    <section id="user-profile" class="hidden">
+      <div class="user-profile-info container">
+        <h4>User Profile Info:</h4>
+        <div>Name: <span id="profile-name"></span></div>
+        <div>Username: <span id="profile-username"></span></div>
+        <div>Account Created: <span id="profile-created"></span></div>
+      </div>
     </section>
 
     <!-- Library JS & our JS -->

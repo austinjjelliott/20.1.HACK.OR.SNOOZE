@@ -67,9 +67,7 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-/*2b.4) Write a function in stories.js that is called when users submit the form. 
-Pick a good name for it. This function should get the data from the form, call the
- .addStory method you wrote, and then put that new story on the page.*/
+/*2b.4) Submit a user generated story form, reset the form after submission */
 function postStory(e) {
   e.preventDefault();
   const author = document.querySelector("#author").value;
@@ -85,13 +83,10 @@ function postStory(e) {
 const submitForm = document.querySelector("#submit-form");
 submitForm.addEventListener("submit", postStory);
 ///////
-////Showing my stories - my stories section:
-
 //Deleting a story:
 const deleteStoryURL = "https://hack-or-snooze-v3.herokuapp.com/stories/";
 
 async function deleteStory(token, storyId) {
-  // let token = userToken;
   try {
     const res = await axios.delete(`${deleteStoryURL}${storyId}`, {
       params: {
@@ -107,7 +102,7 @@ async function deleteStory(token, storyId) {
 
 // Event delegation to handle clicks on trash can icons
 document.addEventListener("click", function (e) {
-  const target = e.target
+  const target = e.target;
   const storyId = target.closest("li").id;
   if (target.classList.contains("trash")) {
     console.log(storyId);
@@ -144,9 +139,12 @@ async function showMyFavorites() {
   const favoriteList = document.getElementById("favorites-list");
   const storiesToHide = document.querySelector("#all-stories-list");
   const myStoriesToHide = document.querySelector("#my-stories-list");
+  const userProfileToHide = document.getElementById("user-profile");
+  userProfileToHide.classList.add("hidden");
   storiesToHide.classList.add("hidden");
   myStoriesToHide.classList.add("hidden");
   submitForm.classList.add("hidden");
+
   favoriteList.classList.remove("hidden");
 
   favoriteList.innerHTML = "";
@@ -155,7 +153,7 @@ async function showMyFavorites() {
   } else {
     favorites.forEach((story) => {
       const storyMarkup = generateStoryMarkup(story);
-      favoriteList.appendChild(storyMarkup[0]); // this is because generateStoryMarkup returns a jQuery element
+      favoriteList.appendChild(storyMarkup[0]); // note to self: d/t generatestorymarkup using jquery
     });
   }
 }
@@ -168,9 +166,11 @@ async function showMyStories() {
   const ownStoriesList = document.getElementById("my-stories-list");
   const storiesToHide = document.querySelector("#all-stories-list");
   const favoritesToHide = document.getElementById("favorites-list");
+  const userProfileToHide = document.getElementById("user-profile");
   submitForm.classList.add("hidden");
   storiesToHide.classList.add("hidden");
   favoritesToHide.classList.add("hidden");
+  userProfileToHide.classList.add("hidden");
   ownStoriesList.classList.remove("hidden");
 
   ownStoriesList.innerHTML = "";

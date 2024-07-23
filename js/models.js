@@ -71,7 +71,7 @@ class StoryList {
    *
    * Returns the new Story instance
    */
-  //FIRST ATTEMPT --- This is part 2A. it works!
+  //ADD STORY FUNCTION 
   async addStory(user, { title, author, url }) {
     const token = user.loginToken;
     let params = {
@@ -226,7 +226,7 @@ class User {
     this.favorites = res.data.user.favorites.map((fav) => new Story(fav));
     return this.favorites;
   }
-  //SHOWING MY STORIES SHOWING MY STORIES ((tested and works))
+  //SHOWING MY STORIES 
   async showMyStories() {
     const res = await axios.get(`${BASE_URL}/users/${this.username}`, {
       params: { token: this.loginToken },
@@ -235,5 +235,19 @@ class User {
       (ownStory) => new Story(ownStory)
     );
     return this.ownStories;
+  }
+
+  //Showing user profile section when you click on nav-user-profile (untested)
+  async showMyProfile() {
+    const res = await axios.get(`${BASE_URL}/users/${this.username}`, {
+      params: { token: this.loginToken },
+    });
+    const userInfo = res.data.user;
+    //Get the right info into our user profile info section
+    $("#profile-name").text(userInfo.name);
+    $("#profile-username").text(userInfo.username);
+    $("#profile-created").text(userInfo.createdAt.slice(0, 10));
+    //Remove Hidden Class of section:
+    $("#user-profile").removeClass("hidden");
   }
 }
